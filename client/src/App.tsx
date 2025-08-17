@@ -4,10 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navigation } from "@/components/ui/navigation";
-import LandingPage from "@/pages/landing";
-import AuthPage from "@/pages/auth";
-import DashboardPage from "@/pages/dashboard";
-import SkillsPage from "@/pages/skills";
+import LandingPage from "./pages/landing";
+import AuthPage from "./pages/auth";
+import DashboardPage from "./pages/dashboard";
+import SkillsPage from "./pages/skills";
 import NotFound from "@/pages/not-found";
 
 function Router() {

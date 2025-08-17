@@ -33,7 +33,7 @@ import {
 
 export default function DashboardPage() {
   const [match] = useRoute("/dashboard/:section?");
-  const section = match?.section || "overview";
+  const section = (match as { section?: string })?.section || "overview";
   const [activeSessionTab, setActiveSessionTab] = useState("upcoming");
   const [activeConversation, setActiveConversation] = useState("1");
   const [newMessage, setNewMessage] = useState("");
