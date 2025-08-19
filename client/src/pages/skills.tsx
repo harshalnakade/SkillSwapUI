@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Star, Clock, Globe, MapPin } from "lucide-react";
 import { mockSkills, type Skill } from "@/lib/mock-data";
+import { SessionModal } from "@/components/modals/SessionModal";
 
 export default function SkillsPage() {
   const [skills] = useState<Skill[]>(mockSkills);
@@ -17,6 +18,8 @@ export default function SkillsPage() {
     format: "all",
     search: ""
   });
+  const [sessionModalOpen, setSessionModalOpen] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState<Skill | null>(null);
 
   const filteredSkills = skills.filter(skill => {
     const matchesCategory = filters.category === "all" || skill.category.toLowerCase() === filters.category.toLowerCase();
@@ -47,8 +50,11 @@ export default function SkillsPage() {
   };
 
   const handleRequestSession = (skillId: string) => {
-    // In a real app, this would open a modal or navigate to a booking page
-    console.log(`Requesting session for skill: ${skillId}`);
+    const skill = skills.find(s => s.id === skillId);
+    if (skill) {
+      setSelectedSkill(skill);
+      setSessionModalOpen(true);
+    }
   };
 
   return (
@@ -219,6 +225,14 @@ export default function SkillsPage() {
           </div>
         )}
       </div>
+
+      {/* Session Request Modal */}
+      <SessionModal
+        open={sessionModalOpen}
+        onOpenChange={setSessionModalOpen}
+        skillName={selectedSkill?.name}
+        teacherName={selectedSkill?.teacherName}
+      />
     </div>
   );
 }

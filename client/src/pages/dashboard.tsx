@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useRoute } from "wouter";
+import { useRoute, Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,6 +18,9 @@ import {
   Plus,
   Send
 } from "lucide-react";
+import { AddSkillModal } from "@/components/modals/AddSkillModal";
+import { EditProfileModal } from "@/components/modals/EditProfileModal";
+import { SessionModal } from "@/components/modals/SessionModal";
 import { 
   mockUser, 
   mockSessions, 
@@ -33,10 +36,13 @@ import {
 
 export default function DashboardPage() {
   const [match] = useRoute("/dashboard/:section?");
-  const section = (match as { section?: string })?.section || "overview";
+  const section = match ? (match as any).section || "overview" : "overview";
   const [activeSessionTab, setActiveSessionTab] = useState("upcoming");
   const [activeConversation, setActiveConversation] = useState("1");
   const [newMessage, setNewMessage] = useState("");
+  const [addSkillModalOpen, setAddSkillModalOpen] = useState(false);
+  const [editProfileModalOpen, setEditProfileModalOpen] = useState(false);
+  const [sessionModalOpen, setSessionModalOpen] = useState(false);
 
   const sidebarItems = [
     { id: "overview", label: "Overview", icon: Home },
@@ -61,12 +67,14 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <h3 className="text-xl font-semibold mb-2">Find a Skill</h3>
             <p className="mb-4 opacity-90">Discover new skills to learn from our community</p>
-            <Button 
-              className="bg-white text-skill-blue hover:bg-gray-100"
-              data-testid="button-browse-skills"
-            >
-              Browse Skills
-            </Button>
+            <Link href="/skills">
+              <Button 
+                className="bg-white text-skill-blue hover:bg-gray-100"
+                data-testid="button-browse-skills"
+              >
+                Browse Skills
+              </Button>
+            </Link>
           </CardContent>
         </Card>
         
@@ -77,6 +85,7 @@ export default function DashboardPage() {
             <Button 
               className="bg-white text-skill-emerald hover:bg-gray-100"
               data-testid="button-add-skill"
+              onClick={() => setAddSkillModalOpen(true)}
             >
               Add Skill
             </Button>
@@ -196,6 +205,7 @@ export default function DashboardPage() {
               <Button 
                 className="bg-skill-blue text-white hover:bg-blue-600"
                 data-testid="button-edit-profile"
+                onClick={() => setEditProfileModalOpen(true)}
               >
                 Edit Profile
               </Button>
@@ -211,6 +221,7 @@ export default function DashboardPage() {
               <Button 
                 className="bg-skill-emerald text-white hover:bg-emerald-600"
                 data-testid="button-add-skill-profile"
+                onClick={() => setAddSkillModalOpen(true)}
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Skill
@@ -270,6 +281,7 @@ export default function DashboardPage() {
           <Button 
             className="bg-skill-blue text-white hover:bg-blue-600"
             data-testid="button-request-session"
+            onClick={() => setSessionModalOpen(true)}
           >
             <Plus className="w-4 h-4 mr-2" />
             Request New Session
@@ -504,9 +516,8 @@ export default function DashboardPage() {
                 onChange={(e) => setNewMessage(e.target.value)}
                 className="flex-1 focus:ring-2 focus:ring-skill-blue focus:border-transparent"
                 data-testid="input-new-message"
-                onKeyPress={(e) => {
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' && newMessage.trim()) {
-                    // In a real app, this would send the message
                     setNewMessage("");
                   }
                 }}
@@ -557,7 +568,7 @@ export default function DashboardPage() {
               const Icon = item.icon;
               const isActive = section === item.id;
               return (
-                <a
+                <Link
                   key={item.id}
                   href={`/dashboard/${item.id}`}
                   className={`group flex items-center px-3 py-2 text-sm font-medium rounded-md mb-1 transition-colors ${
@@ -574,7 +585,7 @@ export default function DashboardPage() {
                       {item.badge}
                     </Badge>
                   )}
-                </a>
+                </Link>
               );
             })}
           </div>
@@ -585,6 +596,22 @@ export default function DashboardPage() {
       <main className="flex-1 overflow-y-auto">
         {renderContent()}
       </main>
+
+      {/* Modals */}
+      <AddSkillModal
+        open={addSkillModalOpen}
+        onOpenChange={setAddSkillModalOpen}
+      />
+      <EditProfileModal
+        open={editProfileModalOpen}
+        onOpenChange={setEditProfileModalOpen}
+      />
+      <SessionModal
+        open={sessionModalOpen}
+        onOpenChange={setSessionModalOpen}
+        skillName=""
+        teacherName=""
+      />
     </div>
   );
 }
